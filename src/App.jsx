@@ -22,12 +22,14 @@ const GOOGLE_REVIEW_URL = getPlaceId()
 
 // ── Static data ──
 const services = [
-  { icon: "🔧", title: "Tire Change",         desc: "Fast and safe tire replacement for worn, damaged, or flat tires." },
-  { icon: "🩹", title: "Tire Repair",         desc: "Patch and repair services for punctures and minor tire damage." },
-  { icon: "⚖️", title: "Wheel Balancing",    desc: "Smooth driving experience by correcting uneven wheel weight." },
-  { icon: "🚨", title: "Roadside Assistance", desc: "Emergency tire help when you need quick support on the road." },
-  { icon: "🔄", title: "Tire Rotation",       desc: "Extend tire life and improve performance with proper rotation." },
-  { icon: "💨", title: "Air Pressure Check",  desc: "Keep tires at the correct pressure for safety and fuel efficiency." },
+  { icon: "🛢️", title: "Oil Change",          desc: "Quick and reliable oil change to keep your engine running smoothly." },
+  { icon: "🛑", title: "Brake Service",        desc: "Inspection, repair, and replacement of brake pads, rotors, brake shoes, and drums." },
+  { icon: "🔧", title: "Tire Change",          desc: "Fast and safe tire replacement for worn, damaged, or flat tires." },
+  { icon: "🩹", title: "Tire Repair",          desc: "Patch and repair services for punctures and minor tire damage." },
+  { icon: "🚨", title: "Roadside Assistance",  desc: "Emergency tire help when you need quick support on the road." },
+  { icon: "🔄", title: "Tire Rotation",        desc: "Extend tire life and improve performance with proper rotation." },
+  { icon: "💨", title: "Air Pressure Check",   desc: "Keep tires at the correct pressure for safety and fuel efficiency." },
+  { icon: "🔩", title: "Basic Service",        desc: "Includes oil & filter replacement, fluid top-up, belt & hose inspection, battery check, and a full safety inspection." },
 ];
 
 const contacts = [
