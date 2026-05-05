@@ -16,9 +16,22 @@ const DEFAULT_REVIEWS = [
 const getPlaceId = () => (import.meta.env.VITE_GOOGLE_PLACE_ID || "").trim();
 const getApiKey  = () => (import.meta.env.VITE_GOOGLE_API_KEY  || "").trim();
 
+// Desktop: direct write-a-review page
 const GOOGLE_REVIEW_URL = getPlaceId()
   ? `https://search.google.com/local/writereview?placeid=${getPlaceId()}`
   : "https://maps.google.com";
+
+// Mobile: maps.google.com handles the redirect to the app reliably
+const GOOGLE_MAPS_MOBILE_URL = getPlaceId()
+  ? `https://www.google.com/maps/place/?q=place_id:${getPlaceId()}`
+  : "https://maps.google.com";
+
+function handleReviewClick(e) {
+  if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    e.preventDefault();
+    window.open(GOOGLE_MAPS_MOBILE_URL, "_blank", "noopener,noreferrer");
+  }
+}
 
 // ── Static data ──
 const services = [
@@ -233,6 +246,7 @@ function App() {
             </div>
             <a
               href={GOOGLE_REVIEW_URL}
+              onClick={handleReviewClick}
               target="_blank"
               rel="noopener noreferrer"
               className="btn leave-review-btn"
