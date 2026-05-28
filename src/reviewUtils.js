@@ -76,7 +76,11 @@ export async function fetchGoogleReviews(placeId, apiKey, timeoutMs = 8000) {
     }
 
     const data = await res.json();
-    return (data.reviews || []).map(sanitizeReview);
+    return {
+      reviews:         (data.reviews || []).map(sanitizeReview),
+      rating:          data.rating          ?? null,
+      userRatingCount: data.userRatingCount ?? 0,
+    };
   } finally {
     clearTimeout(timer);
   }

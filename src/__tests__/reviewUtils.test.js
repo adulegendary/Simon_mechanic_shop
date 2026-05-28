@@ -130,10 +130,10 @@ describe('fetchGoogleReviews', () => {
     vi.unstubAllGlobals();
   });
 
-  const mockSuccess = (reviews = []) =>
+  const mockSuccess = (reviews = [], rating = null, userRatingCount = 0) =>
     fetch.mockResolvedValue({
       ok: true,
-      json: async () => ({ reviews }),
+      json: async () => ({ reviews, rating, userRatingCount }),
     });
 
   it('returns sanitized reviews on success', async () => {
@@ -145,16 +145,23 @@ describe('fetchGoogleReviews', () => {
         text: { text: 'Amazing!' },
       },
     ]);
-    const result = await fetchGoogleReviews('PLACE_ID', 'API_KEY');
-    expect(result).toHaveLength(1);
-    expect(result[0].name).toBe('Alice');
-    expect(result[0].rating).toBe(5);
+    const { reviews } = await fetchGoogleReviews('PLACE_ID', 'API_KEY');
+    expect(reviews).toHaveLength(1);
+    expect(reviews[0].name).toBe('Alice');
+    expect(reviews[0].rating).toBe(5);
   });
 
-  it('returns empty array when Google returns no reviews', async () => {
+  it('returns empty reviews array when Google returns no reviews', async () => {
     mockSuccess([]);
-    const result = await fetchGoogleReviews('PLACE_ID', 'API_KEY');
-    expect(result).toEqual([]);
+    const { reviews } = await fetchGoogleReviews('PLACE_ID', 'API_KEY');
+    expect(reviews).toEqual([]);
+  });
+
+  it('returns rating and userRatingCount from Google', async () => {
+    mockSuccess([], 4.8, 52);
+    const { rating, userRatingCount } = await fetchGoogleReviews('PLACE_ID', 'API_KEY');
+    expect(rating).toBe(4.8);
+    expect(userRatingCount).toBe(52);
   });
 
   it('trims whitespace from placeId and apiKey', async () => {

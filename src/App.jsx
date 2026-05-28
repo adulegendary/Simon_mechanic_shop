@@ -101,10 +101,13 @@ function ReviewCard({ name, rating, date, text, location, avatar }) {
 
 // ── App ──
 function App() {
-  const [reviews,    setReviews]    = useState(DEFAULT_REVIEWS);
-  const [loading,    setLoading]    = useState(false);
-  const [fromGoogle, setFromGoogle] = useState(false);
-  const [fetchError, setFetchError] = useState("");
+  const [menuOpen,          setMenuOpen]          = useState(false);
+  const [reviews,           setReviews]           = useState(DEFAULT_REVIEWS);
+  const [loading,           setLoading]           = useState(false);
+  const [fromGoogle,        setFromGoogle]        = useState(false);
+  const [fetchError,        setFetchError]        = useState("");
+  const [googleRating,      setGoogleRating]      = useState(null);
+  const [googleReviewCount, setGoogleReviewCount] = useState(null);
 
   useEffect(() => {
     const placeId = getPlaceId();
@@ -113,12 +116,13 @@ function App() {
     setLoading(true);
     setFetchError("");
     fetchGoogleReviews(placeId, apiKey)
-      .then((fetched) => {
+      .then(({ reviews: fetched, rating, userRatingCount }) => {
         if (fetched.length > 0) {
           setReviews(fetched);
           setFromGoogle(true);
+          if (rating != null)      setGoogleRating(Number(rating).toFixed(1));
+          if (userRatingCount > 0) setGoogleReviewCount(userRatingCount);
         }
-        // If Google returns 0 reviews, keep the defaults silently
       })
       .catch((err) => {
         const msg = err?.name === "AbortError"
@@ -131,18 +135,32 @@ function App() {
   }, []);
 
   const { total, avg, counts } = computeSummary(reviews);
+  const displayRating = googleRating ?? avg;
+  const displayCount  = googleReviewCount ?? total;
 
   return (
     <div className="app">
       {/* ── Navbar ── */}
-      <header className="navbar">
+      <header className={`navbar${menuOpen ? " nav-open" : ""}`}>
         <div className="logo">Asmara Tire Change</div>
+        <button
+          className="nav-toggle"
+          onClick={() => setMenuOpen(o => !o)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+        >
+          <span /><span /><span />
+        </button>
         <nav className="nav-links" aria-label="Main navigation">
-          <a href="#home">Home</a>
-          <a href="#services">Services</a>
-          <a href="#about">About</a>
-          <a href="#reviews">Reviews</a>
-          <a href="#contact">Contact</a>
+          {["Home","Services","About","Reviews","Contact"].map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              {item}
+            </a>
+          ))}
         </nav>
       </header>
 
@@ -255,9 +273,9 @@ function App() {
           {/* Summary */}
           <div className="review-summary" aria-label="Rating summary">
             <div className="review-score">
-              <span className="score-number">{avg}</span>
-              <div className="score-stars" aria-label={`Average rating ${avg} out of 5`}>
-                {"★".repeat(Math.round(Number(avg)))}
+              <span className="score-number">{displayRating}</span>
+              <div className="score-stars" aria-label={`Average rating ${displayRating} out of 5`}>
+                {"★".repeat(Math.round(Number(displayRating)))}
               </div>
               <span className="score-label">Average Rating</span>
             </div>
@@ -273,7 +291,7 @@ function App() {
               ))}
             </div>
             <div className="review-total">
-              <span className="total-count">{total}</span>
+              <span className="total-count">{displayCount}</span>
               <span className="total-label">{fromGoogle ? "Google Reviews" : "Total Reviews"}</span>
             </div>
           </div>

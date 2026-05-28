@@ -131,6 +131,33 @@ a { text-decoration: none; }
   background: rgba(249, 115, 22, 0.15);
 }
 
+/* ── Hamburger toggle (hidden on desktop) ── */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.nav-toggle span {
+  display: block;
+  height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.2s ease;
+  transform-origin: center;
+}
+
+.nav-open .nav-toggle span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.nav-open .nav-toggle span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
 /* ============================================================
    HERO
    ============================================================ */
@@ -370,7 +397,7 @@ a { text-decoration: none; }
 
 .service-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
 }
 
@@ -840,8 +867,14 @@ a { text-decoration: none; }
 /* ── Review cards grid ── */
 .review-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 22px;
+}
+
+@media (max-width: 960px) {
+  .review-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .review-card {
@@ -1017,6 +1050,10 @@ a { text-decoration: none; }
     padding-right: 5%;
   }
 
+  .service-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .about-content {
     grid-template-columns: 1fr;
     gap: 48px;
@@ -1048,18 +1085,41 @@ a { text-decoration: none; }
     align-items: flex-start;
   }
 
+  .nav-toggle {
+    display: flex;
+  }
+
   .navbar {
-    flex-direction: column;
-    height: auto;
-    padding: 16px 5%;
-    gap: 12px;
+    height: 64px;
+    padding: 0 5%;
   }
 
   .nav-links {
+    display: none;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    padding: 8px 5% 20px;
+    gap: 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    z-index: 999;
+  }
+
+  .nav-open .nav-links {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 4px 12px;
+  }
+
+  .nav-links a {
+    padding: 12px 16px;
+    font-size: 1rem;
+    width: 100%;
+    border-radius: 8px;
   }
 
   .hero {
@@ -1090,7 +1150,7 @@ a { text-decoration: none; }
   }
 
   .service-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .card {
@@ -1120,7 +1180,7 @@ a { text-decoration: none; }
     grid-template-columns: 1fr;
   }
 
-  .review-cards {
+  .review-grid {
     grid-template-columns: 1fr;
   }
 

@@ -16,7 +16,7 @@ import { fetchGoogleReviews } from '../reviewUtils';
 
 // Reset mock to a safe default before every test so it never returns undefined
 beforeEach(() => {
-  fetchGoogleReviews.mockResolvedValue([]);
+  fetchGoogleReviews.mockResolvedValue({ reviews: [], rating: null, userRatingCount: 0 });
 });
 afterEach(() => {
   vi.clearAllMocks();
@@ -96,10 +96,14 @@ describe('App — Google Reviews fetch succeeds', () => {
   beforeEach(() => {
     vi.stubEnv('VITE_GOOGLE_PLACE_ID', 'FAKE_PLACE_ID');
     vi.stubEnv('VITE_GOOGLE_API_KEY', 'FAKE_API_KEY');
-    fetchGoogleReviews.mockResolvedValue([
-      googleReview({ name: 'Alice G.', text: 'Fantastic!' }),
-      googleReview({ name: 'Bob H.',   text: 'Very fast!', rating: 4 }),
-    ]);
+    fetchGoogleReviews.mockResolvedValue({
+      reviews: [
+        googleReview({ name: 'Alice G.', text: 'Fantastic!' }),
+        googleReview({ name: 'Bob H.',   text: 'Very fast!', rating: 4 }),
+      ],
+      rating: 4.9,
+      userRatingCount: 47,
+    });
   });
   afterEach(() => vi.unstubAllEnvs());
 
@@ -177,7 +181,7 @@ describe('App — Google returns empty reviews array', () => {
   beforeEach(() => {
     vi.stubEnv('VITE_GOOGLE_PLACE_ID', 'FAKE_PLACE_ID');
     vi.stubEnv('VITE_GOOGLE_API_KEY', 'FAKE_API_KEY');
-    fetchGoogleReviews.mockResolvedValue([]);
+    fetchGoogleReviews.mockResolvedValue({ reviews: [], rating: null, userRatingCount: 0 });
   });
   afterEach(() => vi.unstubAllEnvs());
 
