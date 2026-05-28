@@ -16,15 +16,10 @@ const DEFAULT_REVIEWS = [
 const getPlaceId = () => (import.meta.env.VITE_GOOGLE_PLACE_ID || "").trim();
 const getApiKey  = () => (import.meta.env.VITE_GOOGLE_API_KEY  || "").trim();
 
-// Desktop: direct write-a-review page
-const GOOGLE_REVIEW_URL = getPlaceId()
-  ? `https://search.google.com/local/writereview?placeid=${getPlaceId()}`
-  : "https://maps.google.com";
+// Direct link to the business listing — takes users to the page where they can leave a review
+const GOOGLE_REVIEW_URL = "https://www.google.com/maps/place/Asmara+Roadside+Service+LLC/@39.7641279,-105.0195628,11z/data=!3m1!4b1!4m6!3m5!1s0x6241cf0cdbd57ddd:0x869564ad6ad287d4!8m2!3d39.7642444!4d-104.8547524!16s%2Fg%2F11nhr7gkhp";
 
-// Mobile: maps.google.com handles the redirect to the app reliably
-const GOOGLE_MAPS_MOBILE_URL = getPlaceId()
-  ? `https://www.google.com/maps/place/?q=place_id:${getPlaceId()}`
-  : "https://maps.google.com";
+const GOOGLE_MAPS_MOBILE_URL = GOOGLE_REVIEW_URL;
 
 function handleReviewClick(e) {
   if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
