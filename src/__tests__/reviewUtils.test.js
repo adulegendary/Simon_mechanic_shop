@@ -46,12 +46,13 @@ describe('sanitizeReview', () => {
       text: { text: 'Great service!' },
     };
     expect(sanitizeReview(raw)).toEqual({
-      name: 'John D.',
-      rating: 5,
-      date: '2 weeks ago',
-      text: 'Great service!',
-      location: '',
-      avatar: 'https://photo.url',
+      name:        'John D.',
+      rating:      5,
+      date:        '2 weeks ago',
+      text:        'Great service!',
+      location:    '',
+      avatar:      'https://photo.url',
+      publishTime: null,
     });
   });
 
@@ -162,6 +163,30 @@ describe('fetchGoogleReviews', () => {
     const { rating, userRatingCount } = await fetchGoogleReviews('PLACE_ID', 'API_KEY');
     expect(rating).toBe(4.8);
     expect(userRatingCount).toBe(52);
+  });
+
+  it('sorts reviews newest first by publishTime', async () => {
+    mockSuccess([
+      { authorAttribution: { displayName: 'Old' },  rating: 5, text: { text: 'Old review' },  publishTime: '2024-01-01T00:00:00Z' },
+      { authorAttribution: { displayName: 'New' },  rating: 5, text: { text: 'New review' },  publishTime: '2025-06-01T00:00:00Z' },
+      { authorAttribution: { displayName: 'Mid' },  rating: 5, text: { text: 'Mid review' },  publishTime: '2024-09-01T00:00:00Z' },
+    ]);
+    const { reviews } = await fetchGoogleReviews('PLACE_ID', 'API_KEY');
+    expect(reviews[0].name).toBe('New');
+    expect(reviews[1].name).toBe('Mid');
+    expect(reviews[2].name).toBe('Old');
+  });
+
+  it('limits results to 5 reviews', async () => {
+    const manyReviews = Array.from({ length: 8 }, (_, i) => ({
+      authorAttribution: { displayName: `User ${i}` },
+      rating: 5,
+      text: { text: `Review ${i}` },
+      publishTime: `2025-0${(i % 9) + 1}-01T00:00:00Z`,
+    }));
+    mockSuccess(manyReviews);
+    const { reviews } = await fetchGoogleReviews('PLACE_ID', 'API_KEY');
+    expect(reviews).toHaveLength(5);
   });
 
   it('trims whitespace from placeId and apiKey', async () => {

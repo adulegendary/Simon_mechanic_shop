@@ -17,12 +17,13 @@ export function clampRating(rating) {
  */
 export function sanitizeReview(raw) {
   return {
-    name:     (raw?.authorAttribution?.displayName || "Anonymous").trim(),
-    rating:   clampRating(raw?.rating),
-    date:     (raw?.relativePublishTimeDescription || "").trim(),
-    text:     (raw?.text?.text || "").trim(),
-    location: "",
-    avatar:   raw?.authorAttribution?.photoUri || null,
+    name:        (raw?.authorAttribution?.displayName || "Anonymous").trim(),
+    rating:      clampRating(raw?.rating),
+    date:        (raw?.relativePublishTimeDescription || "").trim(),
+    text:        (raw?.text?.text || "").trim(),
+    location:    "",
+    avatar:      raw?.authorAttribution?.photoUri || null,
+    publishTime: raw?.publishTime || null,
   };
 }
 
@@ -65,7 +66,7 @@ export async function fetchGoogleReviews(placeId, apiKey, timeoutMs = 8000) {
     const url = `https://places.googleapis.com/v1/places/${id}?key=${key}`;
     const res = await fetch(url, {
       signal: controller.signal,
-      headers: { "X-Goog-FieldMask": "reviews,rating,userRatingCount" },
+      headers: { "X-Goog-FieldMask": "reviews,reviews.publishTime,rating,userRatingCount" },
     });
 
     if (!res.ok) {
@@ -76,8 +77,18 @@ export async function fetchGoogleReviews(placeId, apiKey, timeoutMs = 8000) {
     }
 
     const data = await res.json();
+    const reviews = (data.reviews || [])
+      .map(sanitizeReview)
+      .sort((a, b) => {
+        if (!a.publishTime && !b.publishTime) return 0;
+        if (!a.publishTime) return 1;
+        if (!b.publishTime) return -1;
+        return new Date(b.publishTime) - new Date(a.publishTime);
+      })
+      .slice(0, 5);
+
     return {
-      reviews:         (data.reviews || []).map(sanitizeReview),
+      reviews,
       rating:          data.rating          ?? null,
       userRatingCount: data.userRatingCount ?? 0,
     };
