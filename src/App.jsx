@@ -42,7 +42,7 @@ const services = [
 
 const contacts = [
   { icon: "📞", label: "Phone",    value: "(720) 416-9852" },
-  { icon: "✉️", label: "Email",    value: "saimonestifanose@gmail.com" },
+  { icon: "✉️", label: "Email",    value: "saimonestifanos@gmail.com" },
   { icon: "📍", label: "Location", value: "Aurora, Colorado" },
   { icon: "🕐", label: "Hours",    value: "Mon – Sun: 24 Hours" },
 ];
